@@ -2,30 +2,24 @@
 const { Model } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
-    class MegaMenu extends Model {
+    class SubMegaMenu extends Model {
         static associate(models) {
-            MegaMenu.belongsTo(models.Menu, {
-                foreignKey: 'menuId',
-                as: 'menu',
+            SubMegaMenu.belongsTo(models.MegaMenu, {
+                foreignKey: 'megaMenuId',
+                as: 'megaMenu',
                 onDelete: 'CASCADE',
                 onUpdate: 'CASCADE'
             });
-            MegaMenu.hasMany(models.Content, {
-                foreignKey: 'megaMenuId',
+            SubMegaMenu.hasMany(models.Content, {
+                foreignKey: 'subMegaMenuId',
                 as: 'contents',
-                onDelete: 'CASCADE',
-                onUpdate: 'CASCADE'
-            });
-            MegaMenu.hasMany(models.SubMegaMenu, {
-                foreignKey: 'megaMenuId',
-                as: 'subMegaMenus',
                 onDelete: 'CASCADE',
                 onUpdate: 'CASCADE'
             });
         }
     }
 
-    MegaMenu.init({
+    SubMegaMenu.init({
         id: {
             type: DataTypes.INTEGER,
             primaryKey: true,
@@ -40,19 +34,30 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
             unique: true
         },
-        menuId: {
+        megaMenuId: {
             type: DataTypes.INTEGER,
             allowNull: false,
             references: {
-                model: 'menus',
+                model: 'megaMenus',
                 key: 'id'
             }
         },
+        items: {
+            type: DataTypes.TEXT,
+            allowNull: false,
+            get() {
+                const rawValue = this.getDataValue('items');
+                return rawValue ? JSON.parse(rawValue) : [];
+            },
+            set(value) {
+                this.setDataValue('items', JSON.stringify(value));
+            }
+        }
     }, {
         sequelize,
-        modelName: 'MegaMenu',
-        tableName: 'megaMenus'
+        modelName: 'SubMegaMenu',
+        tableName: 'subMegaMenus'
     });
 
-    return MegaMenu;
+    return SubMegaMenu;
 }; 

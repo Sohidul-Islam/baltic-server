@@ -1,8 +1,10 @@
-const { Content, Menu, MegaMenu } = require('../models');
+const db = require('../db');
+const { Content, Menu, MegaMenu } = db;
+const Response = require('../helpers/Response.helper');
 
 const contentController = {
     // Get all content
-    getAllContent: async (req, res) => {
+    getAllContent: async (req, res, next) => {
         try {
             const content = await Content.findAll({
                 include: [
@@ -16,18 +18,17 @@ const contentController = {
                     }
                 ]
             });
-            res.json(content);
+            return Response.success(res, content, 'Content retrieved successfully');
         } catch (error) {
-            console.error('Error fetching content:', error);
-            res.status(500).json({ message: error.message });
+            next(error);
         }
     },
 
     // Get content by menu path
-    getContentByMenuPath: async (req, res) => {
+    getContentByMenuPath: async (req, res, next) => {
         try {
             const menu = await Menu.findOne({
-                where: { path: req.params.path },
+                where: { path: req.query.path },
                 include: [{
                     model: Content,
                     as: 'contents',
@@ -37,18 +38,28 @@ const contentController = {
                     }]
                 }]
             });
-            if (!menu) {
-                return res.status(404).json({ message: 'Menu not found' });
+
+            const megeMenu = await MegaMenu.findOne({
+                where: { path: req.query.path },
+                include: [{
+                    model: Content,
+                    as: 'contents',
+                }]
+            });
+
+            if (!menu && !megeMenu) {
+                return Response.error(res, 'Menu not found', 404);
             }
-            res.json(menu.contents);
+
+
+            return Response.success(res, (menu?.contents || megeMenu?.contents), 'Content retrieved successfully');
         } catch (error) {
-            console.error('Error fetching content:', error);
-            res.status(500).json({ message: error.message });
+            next(error);
         }
     },
 
     // Create new content
-    createContent: async (req, res) => {
+    createContent: async (req, res, next) => {
         try {
             const newContent = await Content.create(req.body);
             const contentWithRelations = await Content.findByPk(newContent.id, {
@@ -63,19 +74,18 @@ const contentController = {
                     }
                 ]
             });
-            res.status(201).json(contentWithRelations);
+            return Response.success(res, contentWithRelations, 'Content created successfully', 201);
         } catch (error) {
-            console.error('Error creating content:', error);
-            res.status(400).json({ message: error.message });
+            next(error);
         }
     },
 
     // Update content
-    updateContent: async (req, res) => {
+    updateContent: async (req, res, next) => {
         try {
             const content = await Content.findByPk(req.params.id);
             if (!content) {
-                return res.status(404).json({ message: 'Content not found' });
+                return Response.error(res, 'Content not found', 404);
             }
             await content.update(req.body);
             const updatedContent = await Content.findByPk(content.id, {
@@ -90,25 +100,23 @@ const contentController = {
                     }
                 ]
             });
-            res.json(updatedContent);
+            return Response.success(res, updatedContent, 'Content updated successfully');
         } catch (error) {
-            console.error('Error updating content:', error);
-            res.status(400).json({ message: error.message });
+            next(error);
         }
     },
 
     // Delete content
-    deleteContent: async (req, res) => {
+    deleteContent: async (req, res, next) => {
         try {
             const content = await Content.findByPk(req.params.id);
             if (!content) {
-                return res.status(404).json({ message: 'Content not found' });
+                return Response.error(res, 'Content not found', 404);
             }
             await content.destroy();
-            res.json({ message: 'Content deleted successfully' });
+            return Response.success(res, null, 'Content deleted successfully');
         } catch (error) {
-            console.error('Error deleting content:', error);
-            res.status(500).json({ message: error.message });
+            next(error);
         }
     }
 };

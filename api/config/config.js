@@ -8,7 +8,6 @@ module.exports = {
         host: process.env.MYSQLHOST_DEV,
         dialect: 'mysql',
         logging: true,
-        sync: { force: true },
         pool: {
             max: 5,
             min: 0,

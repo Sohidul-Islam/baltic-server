@@ -1,33 +1,15 @@
+const ErrorMiddleware = (err, req, res, next) => {
+    console.error('Error:', err);
 
-const ErrorHandler = (err, req, res, next) => {
-    console.log("Middleware Error Handling");
-    let errStatus = err.statusCode || 500;
-    let errMsg = err.message || 'Something went wrong';
+    const status = err.status || 500;
+    const message = err.message || 'Internal Server Error';
 
-    // Check if the error is a Sequelize unique constraint error
-    if (err.name === 'SequelizeUniqueConstraintError') {
-        errStatus = 400; // Bad Request
-        errMsg = `Duplicate entry for field: ${err.errors[0].path}. Value: ${err.errors[0].value}`;
-    } else if (err.name === 'SequelizeValidationError') {
-        errStatus = 400; // Bad Request
-        errMsg = err.errors.map(error => error.message).join(', ');
-    } else if (err.name === 'SequelizeDatabaseError') {
-        errStatus = 400; // Bad Request
-        errMsg = 'Database error occurred';
-    } else if (err.name === 'SequelizeForeignKeyConstraintError') {
-        errStatus = 400; // Bad Request
-        errMsg = 'Foreign key constraint error';
-    } else if (err.name === 'SequelizeConnectionError') {
-        errStatus = 500; // Internal Server Error
-        errMsg = 'Database connection error';
-    }
-
-    res.status(errStatus).json({
+    res.status(status).json({
         success: false,
-        status: errStatus,
-        message: errMsg,
-        stack: process.env.NODE_ENV === 'development' ? err.stack : {},
+        status,
+        message,
+        stack: process.env.NODE_ENV === 'development' ? err.stack : {}
     });
-}
+};
 
-module.exports =  ErrorHandler
+module.exports = ErrorMiddleware;

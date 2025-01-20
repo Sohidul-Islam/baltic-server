@@ -2,19 +2,28 @@ const express = require('express');
 const router = express.Router();
 const menuController = require('../controllers/menuController');
 
-// Get all menus
+// Debug to find undefined routes
+console.log('Menu Controller methods:', Object.keys(menuController));
+
+// Menu routes
 router.get('/', menuController.getAllMenus);
-
-// Get menu by ID
 router.get('/:id', menuController.getMenuById);
-
-// Create new menu
 router.post('/', menuController.createMenu);
+router.post('/:id', menuController.updateMenu);
+router.post('/delete/:id', menuController.deleteMenu);
 
-// Update menu
-router.put('/:id', menuController.updateMenu);
+// Mega menu routes
+router.get('/:menuId/mega-menus', menuController.getMegaMenus);
+router.get('/:menuId/mega-menus/:megaMenuId', menuController.getMegaMenu);
+router.post('/:menuId/mega-menus', menuController.addMegaMenu);
+router.post('/:menuId/mega-menus/:megaMenuId', menuController.updateMegaMenu);
+router.post('/:menuId/mega-menus/:megaMenuId/delete', menuController.deleteMegaMenu);
 
-// Delete menu
-router.delete('/:id', menuController.deleteMenu);
+// Add these routes for sub-mega menus
+router.get('/:menuId/mega-menus/:megaMenuId/sub-menus', menuController.getSubMegaMenus);
+router.get('/:menuId/mega-menus/:megaMenuId/sub-menus/:subMenuId', menuController.getSubMegaMenu);
+router.post('/:menuId/mega-menus/:megaMenuId/sub-menus', menuController.addSubMegaMenu);
+router.post('/:menuId/mega-menus/:megaMenuId/sub-menus/:subMenuId', menuController.updateSubMegaMenu);
+router.post('/:menuId/mega-menus/:megaMenuId/sub-menus/:subMenuId/delete', menuController.deleteSubMegaMenu);
 
 module.exports = router; 

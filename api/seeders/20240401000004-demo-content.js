@@ -3,46 +3,50 @@
 module.exports = {
     up: async (queryInterface, Sequelize) => {
         try {
+            // First verify that required foreign keys exist
+            const menu = await queryInterface.sequelize.query(
+                `SELECT id FROM menus WHERE id = 1`,
+                { type: queryInterface.sequelize.QueryTypes.SELECT }
+            );
+
+            const megaMenus = await queryInterface.sequelize.query(
+                `SELECT id FROM megaMenus WHERE id IN (1, 2)`,
+                { type: queryInterface.sequelize.QueryTypes.SELECT }
+            );
+
+            const subMegaMenus = await queryInterface.sequelize.query(
+                `SELECT id FROM subMegaMenus WHERE id IN (1, 3)`,
+                { type: queryInterface.sequelize.QueryTypes.SELECT }
+            );
+
+            // Verify all required references exist
+            if (!menu.length || megaMenus.length !== 2 || subMegaMenus.length !== 2) {
+                throw new Error('Required foreign key references are missing. Please ensure menu, megaMenu, and subMegaMenu data exists.');
+            }
+
             const contentData = [
                 {
                     id: 1,
-                    title: 'Business Assurance Overview',
+                    title: 'Assessment Services Overview',
                     menuId: 1,
                     megaMenuId: 1,
+                    subMegaMenuId: 1,
                     sections: JSON.stringify([
                         {
                             type: "hero",
                             data: {
-                                heading: "Business Assurance Services",
-                                subheading: "Ensuring Quality and Trust",
-                                image: "/images/business-assurance.jpg"
+                                heading: "Assessment Services",
+                                subheading: "Comprehensive Assessment Solutions",
+                                image: "/images/assessment.jpg"
                             }
                         },
                         {
                             type: "text",
                             data: {
-                                heading: "Why Choose Our Business Assurance?",
-                                content: "Our business assurance services help organizations establish trust and maintain quality across their operations. With years of experience and a dedicated team of experts, we provide comprehensive solutions that ensure your business meets all necessary standards and regulations.",
-                                image: "/images/why-choose-us.jpg",
+                                heading: "Why Choose Our Assessment Services?",
+                                content: "Our assessment services provide thorough evaluation of your business processes...",
+                                image: "/images/why-assessment.jpg",
                                 position: "right"
-                            }
-                        },
-                        {
-                            type: "imageGrid",
-                            data: {
-                                images: [
-                                    {
-                                        src: "/images/certification.jpg",
-                                        title: "Certification Services",
-                                        description: "Industry-standard certifications"
-                                    },
-                                    {
-                                        src: "/images/auditing.jpg",
-                                        title: "Auditing Services",
-                                        description: "Comprehensive audit solutions"
-                                    }
-                                ],
-                                caption: "Our core services"
                             }
                         }
                     ]),
@@ -53,16 +57,17 @@ module.exports = {
                 },
                 {
                     id: 2,
-                    title: 'Connectivity Solutions',
+                    title: 'Automotive Solutions Overview',
                     menuId: 1,
                     megaMenuId: 2,
+                    subMegaMenuId: 3,
                     sections: JSON.stringify([
                         {
                             type: "hero",
                             data: {
-                                heading: "Connectivity & Products",
-                                subheading: "Next-Gen Solutions",
-                                image: "/images/connectivity.jpg"
+                                heading: "Automotive Solutions",
+                                subheading: "Next-Generation Vehicle Technology",
+                                image: "/images/automotive.jpg"
                             }
                         },
                         {
@@ -70,12 +75,12 @@ module.exports = {
                             data: {
                                 items: [
                                     {
-                                        title: "Automotive Solutions",
-                                        description: "Connected car and mobility solutions"
+                                        title: "Connected Vehicle Systems",
+                                        description: "Advanced connectivity solutions for modern vehicles"
                                     },
                                     {
-                                        title: "IoT Integration",
-                                        description: "End-to-end IoT connectivity services"
+                                        title: "Safety Testing",
+                                        description: "Comprehensive vehicle safety assessment"
                                     }
                                 ]
                             }
@@ -88,6 +93,7 @@ module.exports = {
                 }
             ];
 
+            // Insert content data
             await queryInterface.bulkInsert('contents', contentData, {});
             console.log('Content seed data inserted successfully');
 

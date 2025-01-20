@@ -13,7 +13,13 @@ module.exports = (sequelize, DataTypes) => {
             Content.belongsTo(models.MegaMenu, {
                 foreignKey: 'megaMenuId',
                 as: 'megaMenu',
-                onDelete: 'SET NULL',
+                onDelete: 'CASCADE',
+                onUpdate: 'CASCADE'
+            });
+            Content.belongsTo(models.SubMegaMenu, {
+                foreignKey: 'subMegaMenuId',
+                as: 'subMegaMenu',
+                onDelete: 'CASCADE',
                 onUpdate: 'CASCADE'
             });
         }
@@ -42,6 +48,14 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: true,
             references: {
                 model: 'megaMenus',
+                key: 'id'
+            }
+        },
+        subMegaMenuId: {
+            type: DataTypes.INTEGER,
+            allowNull: true,
+            references: {
+                model: 'subMegaMenus',
                 key: 'id'
             }
         },
