@@ -7,6 +7,7 @@ const menuRoutes = require('./routes/menuRoutes');
 const contentRoutes = require('./routes/contentRoutes');
 const ErrorMiddleware = require('./middlewares/Error.middleware');
 const subMegaMenuRoutes = require('./routes/subMegaMenuRoutes');
+const imageRoutes = require('./routes/imageRoutes');
 
 
 const app = express();
@@ -34,6 +35,7 @@ db.sequelize.authenticate()
 app.use('/api/menu', menuRoutes);
 app.use('/api/content', contentRoutes);
 app.use('/api/submenu', subMegaMenuRoutes);
+app.use('/api/images', imageRoutes);
 
 
 // Error handling
