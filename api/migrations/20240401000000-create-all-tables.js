@@ -129,7 +129,8 @@ module.exports = {
                 },
                 menuId: {
                     type: Sequelize.INTEGER,
-                    allowNull: false,
+                    allowNull: true,
+                    defaultValue: null,
                     references: {
                         model: 'menus',
                         key: 'id'
@@ -140,6 +141,7 @@ module.exports = {
                 megaMenuId: {
                     type: Sequelize.INTEGER,
                     allowNull: true,
+                    defaultValue: null,
                     references: {
                         model: 'megaMenus',
                         key: 'id'
@@ -150,6 +152,7 @@ module.exports = {
                 subMegaMenuId: {
                     type: Sequelize.INTEGER,
                     allowNull: true,
+                    defaultValue: null,
                     references: {
                         model: 'subMegaMenus',
                         key: 'id'

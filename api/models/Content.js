@@ -37,7 +37,8 @@ module.exports = (sequelize, DataTypes) => {
         },
         menuId: {
             type: DataTypes.INTEGER,
-            allowNull: false,
+            allowNull: true,
+            defaultValue: null,
             references: {
                 model: 'menus',
                 key: 'id'
@@ -46,6 +47,7 @@ module.exports = (sequelize, DataTypes) => {
         megaMenuId: {
             type: DataTypes.INTEGER,
             allowNull: true,
+            defaultValue: null,
             references: {
                 model: 'megaMenus',
                 key: 'id'
@@ -54,6 +56,7 @@ module.exports = (sequelize, DataTypes) => {
         subMegaMenuId: {
             type: DataTypes.INTEGER,
             allowNull: true,
+            defaultValue: null,
             references: {
                 model: 'subMegaMenus',
                 key: 'id'

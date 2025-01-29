@@ -28,8 +28,8 @@ const imageController = {
             ]);
 
             return Response.success(res, {
-                original: originalUrl,
-                thumbnail: thumbnailUrl
+                original: process.env.BASE_URL + originalUrl,
+                thumbnail: process.env.BASE_URL + thumbnailUrl
             }, 'Image uploaded successfully', 201);
 
         } catch (error) {
@@ -62,8 +62,8 @@ const imageController = {
                 ]);
 
                 return {
-                    original: originalUrl,
-                    thumbnail: thumbnailUrl
+                    original: process.env.BASE_URL + originalUrl,
+                    thumbnail: process.env.BASE_URL + thumbnailUrl
                 };
             });
 

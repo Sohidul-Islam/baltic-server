@@ -44,7 +44,8 @@ module.exports = (sequelize, DataTypes) => {
         },
         items: {
             type: DataTypes.TEXT,
-            allowNull: false,
+            allowNull: true,
+            defaultValue: "",
             get() {
                 const rawValue = this.getDataValue('items');
                 return rawValue ? JSON.parse(rawValue) : [];
