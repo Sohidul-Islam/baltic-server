@@ -4,13 +4,15 @@ const Menu = require('./Menu');
 const MegaMenu = require('./MegaMenu');
 const SubMegaMenu = require('./SubMegaMenu');
 const Content = require('./Content');
+const Inquiry = require('./Inquiry');
 
 // Initialize models
 const models = {
     Menu,
     MegaMenu,
     SubMegaMenu,
-    Content
+    Content,
+    Inquiry
 };
 
 // Set up associations
