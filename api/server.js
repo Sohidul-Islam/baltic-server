@@ -42,6 +42,12 @@ app.use('/api/images', imageRoutes);
 app.use(ErrorMiddleware);
 
 const PORT = process.env.PORT || 8080;
+
+
+app.get("/", (req, res) => {
+    res.json({ message: "Welcome to baltic inspection" })
+})
+
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
