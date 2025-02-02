@@ -73,17 +73,26 @@ const inquiryController = {
 
     // Update inquiry status
     updateInquiryStatus: async (req, res, next) => {
+        const transaction = await db.sequelize.transaction();
         try {
             const { status } = req.body;
             const inquiry = await Inquiry.findByPk(req.params.id);
 
             if (!inquiry) {
+                await transaction.rollback();
                 return Response.error(res, 'Inquiry not found', 404);
             }
 
-            await inquiry.update({ status });
-            return Response.success(res, inquiry, 'Inquiry status updated successfully');
+            // Update status
+            await inquiry.update({ status }, { transaction });
+
+            // Send status update email
+            await EmailHelper.sendStatusUpdateNotification(inquiry);
+
+            await transaction.commit();
+            return Response.success(res, inquiry, 'Inquiry status updated and notification sent successfully');
         } catch (error) {
+            await transaction.rollback();
             next(error);
         }
     },

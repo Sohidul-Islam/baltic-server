@@ -150,6 +150,87 @@ class EmailHelper {
             return false;
         }
     }
+
+    async sendStatusUpdateNotification(inquiry) {
+        const userEmail = {
+            from: process.env.ADMIN_EMAIL,
+            to: inquiry.email,
+            subject: `Your Inquiry Status Updated - Baltic Inspection`,
+            html: `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <style>
+                        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                        .header { background: #004d99; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
+                        .content { background: #f9f9f9; padding: 20px; border: 1px solid #ddd; border-radius: 0 0 5px 5px; }
+                        .status-update { 
+                            background: #e6f3ff; 
+                            padding: 15px; 
+                            border-radius: 5px; 
+                            margin: 20px 0;
+                            text-align: center;
+                        }
+                        .status-badge {
+                            display: inline-block;
+                            padding: 8px 15px;
+                            border-radius: 20px;
+                            background: #004d99;
+                            color: white;
+                            font-weight: bold;
+                        }
+                        .message { background: white; padding: 20px; border-radius: 5px; margin: 20px 0; }
+                        .footer { margin-top: 20px; text-align: center; color: #666; font-size: 0.9em; }
+                        .contact-info { margin-top: 20px; padding: 15px; background: #f5f5f5; border-radius: 5px; }
+                    </style>
+                </head>
+                <body>
+                    <div class="container">
+                        <div class="header">
+                            <h2>Inquiry Status Update</h2>
+                        </div>
+                        <div class="content">
+                            <div class="greeting">
+                                <p>Dear ${inquiry.firstName},</p>
+                            </div>
+                            <div class="status-update">
+                                <p>Your inquiry has been updated to:</p>
+                                <div class="status-badge">
+                                    ${inquiry.status.toUpperCase()}
+                                </div>
+                            </div>
+                            <div class="message">
+                                <h3>Inquiry Details:</h3>
+                                <p><strong>Type:</strong> ${inquiry.inquiryType}</p>
+                                <p><strong>Original Message:</strong></p>
+                                <p>${inquiry.message}</p>
+                            </div>
+                            <div class="contact-info">
+                                <h3>Need Assistance?</h3>
+                                <p>If you have any questions, please contact us:</p>
+                                <p>📞 Phone: +1234567890</p>
+                                <p>📧 Email: support@balticinspection.com</p>
+                            </div>
+                        </div>
+                        <div class="footer">
+                            <p>© ${new Date().getFullYear()} Baltic Inspection. All rights reserved.</p>
+                            <p>This is an automated message, please do not reply to this email.</p>
+                        </div>
+                    </div>
+                </body>
+                </html>
+            `
+        };
+
+        try {
+            await this.transporter.sendMail(userEmail);
+            return true;
+        } catch (error) {
+            console.error('Status update email sending failed:', error);
+            return false;
+        }
+    }
 }
 
 module.exports = new EmailHelper(); 
