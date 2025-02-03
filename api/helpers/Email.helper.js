@@ -231,6 +231,98 @@ class EmailHelper {
             return false;
         }
     }
+
+    async sendVerificationEmail(email, token) {
+        const verificationEmail = {
+            from: process.env.EMAIL,
+            to: email,
+            subject: 'Verify Your Email - Baltic Inspection',
+            html: `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <style>
+                        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                        .header { background: #004d99; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
+                        .content { background: #f9f9f9; padding: 20px; border: 1px solid #ddd; border-radius: 0 0 5px 5px; }
+                        .verification-code { text-align: center; margin-bottom: 20px; }
+                        .verification-code h1 { font-size: 2em; color: #004d99; }
+                        .footer { margin-top: 20px; text-align: center; color: #666; font-size: 0.9em; }
+                    </style>
+                </head>
+                <body>
+                    <div class="container">
+                        <div class="header">
+                            <h2>Email Verification</h2>
+                        </div>
+                        <div class="content">
+                            <p>Your verification code is:</p>
+                            <div class="verification-code">
+                                <h1>${token}</h1>
+                            </div>
+                            <p>This code will expire in 24 hours.</p>
+                        </div>
+                    </div>
+                </body>
+                </html>
+            `
+        };
+
+        try {
+            await this.transporter.sendMail(verificationEmail);
+            return true;
+        } catch (error) {
+            console.error('Verification email sending failed:', error);
+            return false;
+        }
+    }
+
+    async sendPasswordResetEmail(email, token) {
+        const resetEmail = {
+            from: process.env.EMAIL,
+            to: email,
+            subject: 'Password Reset - Baltic Inspection',
+            html: `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <style>
+                        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                        .header { background: #004d99; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
+                        .content { background: #f9f9f9; padding: 20px; border: 1px solid #ddd; border-radius: 0 0 5px 5px; }
+                        .reset-code { text-align: center; margin-bottom: 20px; }
+                        .reset-code h1 { font-size: 2em; color: #004d99; }
+                        .footer { margin-top: 20px; text-align: center; color: #666; font-size: 0.9em; }
+                    </style>
+                </head>
+                <body>
+                    <div class="container">
+                        <div class="header">
+                            <h2>Password Reset</h2>
+                        </div>
+                        <div class="content">
+                            <p>Your password reset code is:</p>
+                            <div class="reset-code">
+                                <h1>${token}</h1>
+                            </div>
+                            <p>This code will expire in 1 hour.</p>
+                        </div>
+                    </div>
+                </body>
+                </html>
+            `
+        };
+
+        try {
+            await this.transporter.sendMail(resetEmail);
+            return true;
+        } catch (error) {
+            console.error('Password reset email sending failed:', error);
+            return false;
+        }
+    }
 }
 
 module.exports = new EmailHelper(); 
