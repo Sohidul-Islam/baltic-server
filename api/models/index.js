@@ -5,6 +5,7 @@ const MegaMenu = require('./MegaMenu');
 const SubMegaMenu = require('./SubMegaMenu');
 const Content = require('./Content');
 const Inquiry = require('./Inquiry');
+const FooterContent = require('./FooterContent');
 
 // Initialize models
 const models = {
@@ -12,7 +13,8 @@ const models = {
     MegaMenu,
     SubMegaMenu,
     Content,
-    Inquiry
+    Inquiry,
+    FooterContent
 };
 
 // Set up associations
