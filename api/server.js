@@ -9,6 +9,7 @@ const ErrorMiddleware = require('./middlewares/Error.middleware');
 const subMegaMenuRoutes = require('./routes/subMegaMenuRoutes');
 const imageRoutes = require('./routes/imageRoutes');
 const inquiryRoutes = require('./routes/inquiryRoutes');
+const footerContentRoutes = require('./routes/footerContentRoutes');
 
 
 const app = express();
@@ -38,6 +39,7 @@ app.use('/api/content', contentRoutes);
 app.use('/api/submenu', subMegaMenuRoutes);
 app.use('/api/images', imageRoutes);
 app.use('/api/inquiry', inquiryRoutes);
+app.use('/api/footer', footerContentRoutes);
 
 
 // Error handling
