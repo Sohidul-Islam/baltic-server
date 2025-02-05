@@ -258,10 +258,10 @@ class EmailHelper {
                         </div>
                         <div class="content">
                             <p>Your verification code is:</p>
-                            <div class="verification-code">
-                                <h1>${token}</h1>
+                            <div class="verification-link">
+                                <a href="${process.env.FRONTEND_URL}/verify-email?token=${token}&email=${email}">Verify Email</a>
                             </div>
-                            <p>This code will expire in 24 hours.</p>
+                            <p>This link will expire in 24 hours.</p>
                         </div>
                     </div>
                 </body>

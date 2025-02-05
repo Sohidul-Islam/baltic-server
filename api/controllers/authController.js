@@ -50,7 +50,8 @@ const authController = {
 
             await transaction.commit();
             return Response.success(res, {
-                message: 'Registration successful. Please check your email for verification.'
+                message: 'Registration successful. Please check your email for verification.',
+                user: user
             }, 'User registered successfully', 201);
         } catch (error) {
             await transaction.rollback();
@@ -92,6 +93,31 @@ const authController = {
         }
     },
 
+    resendVerificationEmail: async (req, res, next) => {
+        const { email } = req.body;
+        const user = await User.findOne({ where: { email } });
+
+        if (!user) {
+            return Response.error(res, 'User not found', 404);
+        }
+
+        if (user?.dataValues?.isVerified) {
+            return Response.error(res, 'Email already verified', 400);
+        }
+
+        const verificationToken = AuthHelper.generateVerificationToken();
+        const verificationTokenExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours 
+
+        await user.update({
+            verificationToken,
+            verificationTokenExpiry
+        });
+        await EmailHelper.sendVerificationEmail(user.email, verificationToken);
+        return Response.success(res, {
+            message: 'Verification email resent'
+        });
+    },
+
     // Login
     login: async (req, res, next) => {
         try {
@@ -119,11 +145,7 @@ const authController = {
 
             return Response.success(res, {
                 token,
-                user: {
-                    id: user.id,
-                    username: user.username,
-                    email: user.email
-                }
+                user: user
             });
         } catch (error) {
             next(error);
