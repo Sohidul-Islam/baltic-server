@@ -27,6 +27,10 @@ module.exports = {
                 type: Sequelize.BOOLEAN,
                 defaultValue: false
             },
+            status: {
+                type: Sequelize.ENUM('pending', 'approved', 'rejected'),
+                defaultValue: 'pending'
+            },
             verificationToken: {
                 type: Sequelize.STRING,
                 allowNull: true

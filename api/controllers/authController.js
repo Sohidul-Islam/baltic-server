@@ -52,13 +52,54 @@ const authController = {
             return Response.success(res, {
                 message: 'Registration successful. Please check your email for verification.',
                 user: user
-            }, 'User registered successfully', 201);
+            }, 'User registered successfully', 200);
         } catch (error) {
             await transaction.rollback();
             next(error);
         }
     },
 
+    getAllUsers: async (req, res, next) => {
+        const users = await User.findAll();
+        return Response.success(res, {
+            users: users
+        }, 'Users fetched successfully', 200);
+    },
+    verifyUser: async (req, res, next) => {
+        const { id } = req.user;
+        const user = await User.findByPk(id);
+        await user.update({ isVerified: true });
+        return Response.success(res, {
+            user: user
+        }, 'User verified successfully', 200);
+    },
+
+    updateUserStatus: async (req, res, next) => {
+        const { id } = req.params;
+        const { status } = req.body;
+        const user = await User.findByPk(id);
+        await user.update({ status });
+        return Response.success(res, {
+            user: user
+        }, 'User status updated successfully', 200);
+    },
+    updateUser: async (req, res, next) => {
+        const { id } = req.params;
+        const { username, email, password } = req.body;
+        const user = await User.findByPk(id);
+        await user.update({ username, email, password });
+        return Response.success(res, {
+            user: user
+        }, 'User updated successfully', 200);
+    },
+    deleteUser: async (req, res, next) => {
+        const { id } = req.params;
+        const user = await User.findByPk(id);
+        await user.destroy();
+        return Response.success(res, {
+            message: 'User deleted successfully'
+        }, 'User deleted successfully', 200);
+    },
     // Verify email
     verifyEmail: async (req, res, next) => {
         try {

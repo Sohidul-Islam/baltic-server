@@ -303,11 +303,11 @@ class EmailHelper {
                             <h2>Password Reset</h2>
                         </div>
                         <div class="content">
-                            <p>Your password reset code is:</p>
+                            <p>Your reset password link is:</p>
                             <div class="reset-code">
-                                <h1>${token}</h1>
+                              <a href="${process.env.FRONTEND_URL}/reset-password?token=${token}&email=${email}">Reset Password</a>
                             </div>
-                            <p>This code will expire in 1 hour.</p>
+                            <p>This link will expire in 1 hour.</p>
                         </div>
                     </div>
                 </body>

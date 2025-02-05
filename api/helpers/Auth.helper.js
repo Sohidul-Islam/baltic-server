@@ -14,11 +14,14 @@ class AuthHelper {
         return crypto.randomInt(100000, 999999).toString();
     }
 
-    static verifyToken(token) {
+    static verifyToken(req, res, next) {
         try {
-            return jwt.verify(token, process.env.JWT_SECRET);
+            const token = req.headers['authorization'].split(' ')[1];
+            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+            req.user = decoded;
+            next();
         } catch (error) {
-            return null;
+            return Response.error(res, 'Invalid token', 401);
         }
     }
 }
