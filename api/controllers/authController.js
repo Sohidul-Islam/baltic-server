@@ -86,7 +86,7 @@ const authController = {
     updateUser: async (req, res, next) => {
         try {
             const { id } = req.params;
-            const { username, email, password } = req.body;
+            const { username, email, password, isVerified } = req.body;
 
             const user = await User.findByPk(id);
             if (!user) {
@@ -97,7 +97,8 @@ const authController = {
             await user.update({
                 username: username || user.username,
                 email: email || user.email,
-                password: password || user.password
+                password: password || user.password,
+                isVerified
             });
 
             // Remove password from response
