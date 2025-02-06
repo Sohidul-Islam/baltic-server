@@ -40,6 +40,10 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
             unique: true
         },
+        enableQuickLink: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false
+        },
         menuId: {
             type: DataTypes.INTEGER,
             allowNull: false,

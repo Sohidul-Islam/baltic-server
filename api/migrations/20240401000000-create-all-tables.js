@@ -19,6 +19,10 @@ module.exports = {
                     type: Sequelize.STRING,
                     allowNull: false
                 },
+                enableQuickLink: {
+                    type: Sequelize.BOOLEAN,
+                    defaultValue: false
+                },
                 path: {
                     type: Sequelize.STRING,
                     allowNull: false,
@@ -62,6 +66,10 @@ module.exports = {
                     onUpdate: 'CASCADE',
                     onDelete: 'CASCADE'
                 },
+                enableQuickLink: {
+                    type: Sequelize.BOOLEAN,
+                    defaultValue: false
+                },
                 createdAt: {
                     allowNull: false,
                     type: Sequelize.DATE
@@ -89,6 +97,10 @@ module.exports = {
                     type: Sequelize.STRING,
                     allowNull: false,
                     unique: true
+                },
+                enableQuickLink: {
+                    type: Sequelize.BOOLEAN,
+                    defaultValue: false
                 },
                 megaMenuId: {
                     type: Sequelize.INTEGER,

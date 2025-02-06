@@ -47,7 +47,7 @@ const menuController = {
     // Create new menu
     createMenu: async (req, res, next) => {
         try {
-            const { title, path, megaMenus } = req.body;
+            const { title, path, megaMenus, enableQuickLink } = req.body;
 
             const isPathExist = await Menu.findOne({
                 where: { path }
@@ -59,7 +59,7 @@ const menuController = {
                 return Response.error(res, 'Path should be unique', 500);
             }
 
-            const menu = await Menu.create({ title, path });
+            const menu = await Menu.create({ title, path, enableQuickLink });
 
             if (megaMenus?.length > 0) {
                 const megaMenuPromises = megaMenus.map(mm => ({
@@ -85,7 +85,7 @@ const menuController = {
     // Update menu
     updateMenu: async (req, res, next) => {
         try {
-            const { title, path, megaMenus } = req.body;
+            const { title, path, megaMenus, enableQuickLink } = req.body;
 
             // Start transaction
             const transaction = await db.sequelize.transaction();
@@ -111,7 +111,7 @@ const menuController = {
                     return Response.error(res, 'Path should be unique', 500);
                 }
 
-                await menu.update({ title, path }, { transaction });
+                await menu.update({ title, path, enableQuickLink }, { transaction });
 
                 if (megaMenus) {
                     // Get existing mega menu IDs

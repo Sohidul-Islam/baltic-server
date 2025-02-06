@@ -7,6 +7,11 @@ module.exports = (sequelize, DataTypes) => {
         static associate(models) {
             // Define associations if needed
         }
+
+        // Instance method to check password
+        async validatePassword(password, hashedPassword) {
+            return await bcrypt.compare(password, hashedPassword);
+        }
     }
 
     User.init({
@@ -42,6 +47,10 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.BOOLEAN,
             defaultValue: false
         },
+        status: {
+            type: DataTypes.ENUM('pending', 'approved', 'rejected'),
+            defaultValue: 'pending'
+        },
         verificationToken: {
             type: DataTypes.STRING,
             allowNull: true
@@ -54,10 +63,6 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: true
         },
-        status: {
-            type: DataTypes.ENUM('pending', 'approved', 'rejected'),
-            defaultValue: 'pending'
-        },
         resetPasswordExpiry: {
             type: DataTypes.DATE,
             allowNull: true
@@ -67,23 +72,22 @@ module.exports = (sequelize, DataTypes) => {
         modelName: 'User',
         tableName: 'users',
         hooks: {
+            // Hash password before creating user
             beforeCreate: async (user) => {
                 if (user.password) {
-                    user.password = await bcrypt.hash(user.password, 10);
+                    const salt = await bcrypt.genSalt(10);
+                    user.password = await bcrypt.hash(user.password, salt);
                 }
             },
+            // Hash password before updating if it changed
             beforeUpdate: async (user) => {
                 if (user.changed('password')) {
-                    user.password = await bcrypt.hash(user.password, 10);
+                    const salt = await bcrypt.genSalt(10);
+                    user.password = await bcrypt.hash(user.password, salt);
                 }
             }
         }
     });
-
-    // Instance method to check password
-    User.prototype.validatePassword = async function (password) {
-        return bcrypt.compare(password, this.password);
-    };
 
     return User;
 }; 

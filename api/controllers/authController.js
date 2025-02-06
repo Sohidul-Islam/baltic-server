@@ -84,13 +84,32 @@ const authController = {
         }, 'User status updated successfully', 200);
     },
     updateUser: async (req, res, next) => {
-        const { id } = req.params;
-        const { username, email, password } = req.body;
-        const user = await User.findByPk(id);
-        await user.update({ username, email, password });
-        return Response.success(res, {
-            user: user
-        }, 'User updated successfully', 200);
+        try {
+            const { id } = req.params;
+            const { username, email, password } = req.body;
+
+            const user = await User.findByPk(id);
+            if (!user) {
+                return Response.error(res, 'User not found', 404);
+            }
+
+            // Password will be automatically hashed by the model hooks
+            await user.update({
+                username: username || user.username,
+                email: email || user.email,
+                password: password || user.password
+            });
+
+            // Remove password from response
+            const userResponse = user.toJSON();
+            delete userResponse.password;
+
+            return Response.success(res, {
+                user: userResponse
+            }, 'User updated successfully', 200);
+        } catch (error) {
+            next(error);
+        }
     },
     deleteUser: async (req, res, next) => {
         const { id } = req.params;
@@ -175,8 +194,10 @@ const authController = {
                 return Response.error(res, 'Please verify your email first', 401);
             }
 
-            // Validate password
-            const isValidPassword = await user.validatePassword(password);
+            // Validate password using the instance method
+            const isValidPassword = await user.validatePassword(password, user.dataValues?.password);
+
+            console.log({ isValidPassword });
             if (!isValidPassword) {
                 return Response.error(res, 'Invalid credentials', 401);
             }
@@ -184,9 +205,13 @@ const authController = {
             // Generate token
             const token = AuthHelper.generateToken(user);
 
+            // Remove password from response
+            const userResponse = user.toJSON();
+            delete userResponse.password;
+
             return Response.success(res, {
                 token,
-                user: user
+                user: userResponse
             });
         } catch (error) {
             next(error);
@@ -226,7 +251,7 @@ const authController = {
     // Reset password
     resetPassword: async (req, res, next) => {
         try {
-            const { email, token, newPassword } = req.body;
+            const { email, token, password } = req.body;
 
             const user = await User.findOne({
                 where: {
@@ -242,9 +267,9 @@ const authController = {
                 return Response.error(res, 'Invalid or expired reset token', 400);
             }
 
-            // Update password
+            // Password will be automatically hashed by the model hooks
             await user.update({
-                password: newPassword,
+                password: password,
                 resetPasswordToken: null,
                 resetPasswordExpiry: null
             });

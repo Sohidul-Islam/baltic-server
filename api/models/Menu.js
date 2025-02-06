@@ -29,10 +29,15 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: false
         },
+        enableQuickLink: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false
+        },
         path: {
             type: DataTypes.STRING,
             allowNull: false
         }
+
     }, {
         sequelize,
         modelName: 'Menu',
