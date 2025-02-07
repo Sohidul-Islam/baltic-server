@@ -55,7 +55,7 @@ module.exports = (sequelize, DataTypes) => {
     }, {
         sequelize,
         modelName: 'MegaMenu',
-        tableName: 'megaMenus'
+        tableName: 'megamenus'
     });
 
     return MegaMenu;

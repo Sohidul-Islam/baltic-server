@@ -61,7 +61,7 @@ module.exports = (sequelize, DataTypes) => {
     }, {
         sequelize,
         modelName: 'SubMegaMenu',
-        tableName: 'subMegaMenus'
+        tableName: 'submegamenus'
     });
 
     return SubMegaMenu;
